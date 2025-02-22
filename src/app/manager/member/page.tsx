@@ -17,6 +17,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import AddMemberDialog from "@/components/manager/addMemberDialog";
 import { AddPointDialog } from "@/components/manager/addPointDialog";
 import { UsePointDialog } from "@/components/manager/usePointDialog";
+import toast, { Toaster } from "react-hot-toast";
 
 // interface PreparingOrderWithTable extends OrderResponse {
 //   table: BaseTableResponse;
@@ -51,8 +52,12 @@ export default function MemberPage() {
   const [ openAddpointDialog, setopenAddpointDialog] = useState(false);
   const [ openUsePointDialog, setOpenUsePointDialog] = useState(false);
 
-
   const toaster = useToastHandler();
+
+  const handleAddMemberSubmit = (phone: string, pin: string) => {
+    setData([...data, { phone, points: "0 / 10" }]);
+    toaster("เพิ่มสมาชิกสำเร็จ", "คุณได้ทำการเพิ่มสมาชิกเข้าในระบบ");
+  };
 
   return (
     <div className="w-full flex flex-col gap-10">
@@ -77,11 +82,15 @@ export default function MemberPage() {
         </label>
 
         <Button variant="destructive" onClick={() => setOpen(true)}>
-            + Add Member
+            + เพิ่มสมาชิก
         </Button>
 
-        <AddMemberDialog open={open} onClose={() => setOpen(false)}/>
-      </div>
+        <AddMemberDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          onSubmit={handleAddMemberSubmit} 
+        />
+    </div>
       
       <Table>
         <TableHeader>

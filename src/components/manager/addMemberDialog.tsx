@@ -6,20 +6,25 @@ import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
 // import { X } from "lucide-react";
 
-export default function AddMemberDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function AddMemberDialog({ open, onClose, onSubmit, }: { open: boolean; onClose: () => void; onSubmit: (phone: string, pin: string) => void; }) {
   const [phone, setPhone] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    if (!phone || !pin) {
-      setError("กรุณากรอกข้อมูลให้ครบถ้วน");
+    const phonePattern = /^\d{10}$/;
+    const pinPattern = /^\d{6}$/;
+
+    if (!phonePattern.test(phone) || !pinPattern.test(pin)) {
+      setError("all errors");
     } else {
       setError("");
-      alert("สมาชิกถูกเพิ่มเรียบร้อย!");
+      onSubmit(phone, pin);
       onClose(); // Close modal after success
     }
   };
+
+  const isFormValid = /^\d{10}$/.test(phone) && /^\d{6}$/.test(pin);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -48,15 +53,18 @@ export default function AddMemberDialog({ open, onClose }: { open: boolean; onCl
             <label className="font-semibold">PIN : </label>
             <input
               type="password"
-              placeholder="xxxx"
+              placeholder="xxxxxx"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm text-right pr-4">{error}</p>}
 
-          <Button className="w-full text-white" onClick={handleSubmit}>
+          <Button 
+            className="w-full text-white" 
+            onClick={handleSubmit}
+            disabled={!isFormValid}>
             เพิ่มสมาชิก
           </Button>
         </div>
